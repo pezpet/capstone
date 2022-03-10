@@ -1,3 +1,16 @@
+# Executive Summary - Predicting World Surf League Scores
+## Goals
+The goal of this project is to use raw buoy data to predict scores in surfing competition heats. The WSL uses sofisticated forecasting models to estimate the quality of waves at each location were events are held, and even though "scoring potential" is frequently mentioned as a critical variable, no specific modeling or forecasting is described when deciding competition dates and times. By creating a model that targets scores, this projects aims to improve the decision making process of the WSL.
+
+## Data collection
+### World Surf League
+The World Surf League organizes a yearly world tour of surfing competitions and is regarded as the highest level of competitive surfing. Their website keeps scores for all competitions back to 2008. These scores were scraped from the site. Additionally, to be able to link scores to buoy data, the dates for all heats and all events were also scraped.
+
+### NOAA (National Buoy Data Center)
+The National Buoy Data Center (part of NOAA) keeps historic data from marine buoys around the world for oceanic conditions, including wave height, direction, period, and other information. This historic data is available for download in txt format by year by buoy.
+
+
+
 WDIR| Wind direction (the direction the wind is coming from in degrees clockwise from true N) during the same period used for WSPD. See Wind Averaging Methods
 WSPD	Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly. See Wind Averaging Methods.
 GST	Peak 5 or 8 second gust speed (m/s) measured during the eight-minute or two-minute period. The 5 or 8 second period can be determined by payload, See the Sensor Reporting, Sampling, and Accuracy section.
