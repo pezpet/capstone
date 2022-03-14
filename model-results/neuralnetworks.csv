@@ -1,4 +1,13 @@
-,Model Name,Train RMSE,Test RMSE,Observations
-0,Neural Network,2.7383005619049072,3.046705722808838,Single Dense Layer with 35 neurons
-1,Neural Network with GS,2.8501322269439697,3.086158514022827,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7fc8738ac3d0>, 'epochs': 200, 'model__dropout_rate': 0.5, 'model__neurons': 50}"
-2,Neural Network with GS,2.9304983615875244,3.137319564819336,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7fc8736aca50>, 'epochs': 200, 'model__dropout_rate': 0.15, 'model__dropout_rate2': 0.5, 'model__neurons': 65, 'model__neurons2': 30}"
+,Model Name,Score Type,Score,Observations
+0,Neural Network,Train RMSE,2.5229427814483643,Single Dense Layer with 35 neurons
+1,Neural Network,Test RMSE,2.955470561981201,Single Dense Layer with 35 neurons
+2,Neural Network Grid Search,Train RMSE,2.823276996612549,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5ea8459590>, 'epochs': 200, 'model__dropout_rate': 0.15, 'model__neurons': 45}"
+3,Neural Network Grid Search,Test RMSE,3.0185906887054443,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5ea8459590>, 'epochs': 200, 'model__dropout_rate': 0.15, 'model__neurons': 45}"
+4,Neural Network,Train RMSE,2.5542004108428955,Single Dense Layer with 35 neurons
+5,Neural Network,Test RMSE,2.8827064037323,Single Dense Layer with 35 neurons
+6,Neural Network Grid Search,Train RMSE,2.495145559310913,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5eaaf43490>, 'epochs': 200, 'model__dropout_rate': 0.1, 'model__neurons': 45}"
+7,Neural Network Grid Search,Test RMSE,2.954209566116333,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5eaaf43490>, 'epochs': 200, 'model__dropout_rate': 0.1, 'model__neurons': 45}"
+8,Neural Network Grid Search 2,Train RMSE,2.8052289485931396,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5eaaef2a50>, 'epochs': 200, 'model__dropout_rate': 0.35, 'model__dropout_rate2': 0.5, 'model__neurons': 65, 'model__neurons2': 50}"
+9,Neural Network Grid Search 2,Test RMSE,3.0657222270965576,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5eaaef2a50>, 'epochs': 200, 'model__dropout_rate': 0.35, 'model__dropout_rate2': 0.5, 'model__neurons': 65, 'model__neurons2': 50}"
+10,Neural Network Grid Search 2,Train RMSE,2.4192166328430176,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5eaae9ad10>, 'epochs': 200, 'model__dropout_rate': 0.35, 'model__dropout_rate2': 0.2, 'model__neurons': 65, 'model__neurons2': 75}"
+11,Neural Network Grid Search 2,Test RMSE,2.856377363204956,"{'callbacks': <keras.callbacks.EarlyStopping object at 0x7f5eaae9ad10>, 'epochs': 200, 'model__dropout_rate': 0.35, 'model__dropout_rate2': 0.2, 'model__neurons': 65, 'model__neurons2': 75}"
