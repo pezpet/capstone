@@ -1,6 +1,8 @@
 ,Model Name,Score Type,Score,Observations
 0,Baseline (y_mean),Baseline RMSE,3.1675113889842983,
-1,Lasso Regression,Train RMSE,2.9232308445850683,{'alpha': 0.1}
-2,Lasso Regression,Test RMSE,2.8200822609798704,{'alpha': 0.1}
-3,Ridge Regression,Train RMSE,2.953975571786676,{'alpha': 200}
-4,Ridge Regression,Test RMSE,2.833251983216231,{'alpha': 200}
+1,Linear Regression,Train RMSE,2.8378314204310477,
+2,Linear Regression,Test RMSE,2.9195332929845854,
+3,Lasso Regression,Train RMSE,2.9232308445850683,{'alpha': 0.1}
+4,Lasso Regression,Test RMSE,2.8200822609798704,{'alpha': 0.1}
+5,Ridge Regression,Train RMSE,2.953975571786676,{'alpha': 200}
+6,Ridge Regression,Test RMSE,2.833251983216231,{'alpha': 200}
