@@ -6,22 +6,67 @@ The goal of this project is to use raw buoy data to predict scores in surfing co
 ### World Surf League
 The World Surf League organizes a yearly world tour of surfing competitions and is regarded as the highest level of competitive surfing. Their website keeps scores for all competitions back to 2008. These scores were scraped from the site. Additionally, to be able to link scores to buoy data, the dates for all heats and all events were also scraped.
 
+Scores data description:
+| Column Name | Data Description | dtype |
+|---|---|---|
+| year | Year in which the competition was held | int |
+| event | Event Name | str |
+| round | Competition Round | str |
+| heat | Competition Heat within Round | str |
+| name | Athlete Name competing in Heat | str |
+| top_two_waves_total | Sum of the two highest scoring waves for each athlete in a Heat | float |
+
+Round Dates data description:
+| Column Name | Data Description | dtype |
+|---|---|---|
+| year | Year in which the competition was held | int |
+| event | Event Name | str |
+| round | Competition Round | str |
+| heat | Competition Heat within Round | str |
+| date | Date when each Heat ended | str |
+
+
 ### NOAA (National Buoy Data Center)
-The National Buoy Data Center (part of NOAA) keeps historic data from marine buoys around the world for oceanic conditions, including wave height, direction, period, and other information. This historic data is available for download in txt format by year by buoy.
+The National Buoy Data Center (part of NOAA) keeps historic data from marine buoys around the world for oceanic conditions, including wave height, direction, period, and other information. This historic data is available for download in txt format by year by buoy. There are also weather stations that log historic wind data.
 
+Raw NOAA buoy data description:
+| Column Name | Data Description | dtype |
+|---|---|---|
+| #YY | Year of measurement | int |
+| MM | Month of measurement | int |
+| DD | Day of measurement | int |
+| hh | Hour of measurement | int |
+| mm | Minute of measurement | int |
+| WDI | Wind Direction, degrees clockwise from true north | int |
+| R WSP | Wind Speed, meters per second (m/s) | int |
+| D GST | Peak 5 or 8 second gust speed (m/s) measured during the eight-minute or two-minute period  float |
+| WVHT | Significant wave height (meters) is calculated as the average of the highest one-third of all of the wave heights during the 20-minute sampling period. | float |
+| DPD | Dominant wave period (seconds) is the period with the maximum wave energy. | float |
+| APD | Average wave period (seconds) of all waves during the 20-minute period. | float |
+| MWD | The direction from which the waves at the dominant period (DPD) are coming. The units are degrees from true North, increasing clockwise, with North as 0 (zero) degrees and East as 90 degrees. | int |
+| PRES | Sea level pressure (hPa). | int |
+| ATMP | Air temperature (Celsius).| float |
+| WTMP | Sea surface temperature (Celsius). | float |
+| DEWP | Dewpoint temperature taken at the same height as the air temperature measurement. | float |
+| VIS | Station visibility (nautical miles). | float |
+| TID | The water level in feet above or below Mean Lower Low Water (MLLW). | float |
 
+## Data Cleaning
+### Scores
 
-WDIR| Wind direction (the direction the wind is coming from in degrees clockwise from true N) during the same period used for WSPD. See Wind Averaging Methods
-WSPD	Wind speed (m/s) averaged over an eight-minute period for buoys and a two-minute period for land stations. Reported Hourly. See Wind Averaging Methods.
-GST	Peak 5 or 8 second gust speed (m/s) measured during the eight-minute or two-minute period. The 5 or 8 second period can be determined by payload, See the Sensor Reporting, Sampling, and Accuracy section.
-WVHT	Significant wave height (meters) is calculated as the average of the highest one-third of all of the wave heights during the 20-minute sampling period. See the Wave Measurements section.
-DPD	Dominant wave period (seconds) is the period with the maximum wave energy. See the Wave Measurements section.
-APD	Average wave period (seconds) of all waves during the 20-minute period. See the Wave Measurements section.
-MWD	The direction from which the waves at the dominant period (DPD) are coming. The units are degrees from true North, increasing clockwise, with North as 0 (zero) degrees and East as 90 degrees. See the Wave Measurements section.
-PRES	Sea level pressure (hPa). For C-MAN sites and Great Lakes buoys, the recorded pressure is reduced to sea level using the method described in NWS Technical Procedures Bulletin 291 (11/14/80). ( labeled BAR in Historical files)
-ATMP	Air temperature (Celsius). For sensor heights on buoys, see Hull Descriptions. For sensor heights at C-MAN stations, see C-MAN Sensor Locations
-WTMP	Sea surface temperature (Celsius). For buoys the depth is referenced to the hull's waterline. For fixed platforms it varies with tide, but is referenced to, or near Mean Lower Low Water (MLLW).
-DEWP	Dewpoint temperature taken at the same height as the air temperature measurement.
-VIS	Station visibility (nautical miles). Note that buoy stations are limited to reports from 0 to 1.6 nmi.
-PTDY	Pressure Tendency is the direction (plus or minus) and the amount of pressure change (hPa)for a three hour period ending at the time of observation. (not in Historical files)
-TIDE	The water level in feet above or below Mean Lower Low Water (MLLW).
+Scores data were extensively cleaned. Round and Heat values were reformatted for consistency, e.g. "Semifinal" and "Semifinals" were changed to "Semifinals", "Seeding Round" and "Elimination Round" were combined into "Round 1", and other changes described in the code.
+
+Heat Dates were converted to datetime format using `pd.to_datetime()`. To assign a precise time of ocurrence to each heat, the data was revied manually and an offset was applied so that each day's heats would start at 6 am.
+
+Finally scores and datetime data was merged succesfully, grouping by time and gettting the resulting average score per heat, which is our **target**.
+
+### NOAA waves and wind
+
+Waves and wind data were also extensively cleaned. NOAA records missing data as different versions of 99, 99.0, 999, 9999.0, etc. These were removed. In some cases, all data in a column were missing, so these columns were removed. Other missing values such as "..." and "MM" were manually identified using `.unique()` and removed.
+
+Columns were renamed for human readability, and dates were parsed from separate columns into a single column and moved to the index.
+
+Wave and wind directions were converted to `np.sin()` and `np.cos()` for better model usability.
+
+## Feature Engineering
+The main feature engineering performed in this project was to create time-shifted features of our buoy data.

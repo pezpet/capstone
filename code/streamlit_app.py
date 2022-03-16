@@ -8,12 +8,12 @@ from bs4 import BeautifulSoup
 # Get buoy data
 url = "https://www.ndbc.noaa.gov/station_page.php?station=51201"
 res = get(url)
-soup = BeautifulSoup(res.content)
+soup = BeautifulSoup(res.content, features="lxml")
 
 # Get wind data
 url = "https://www.ndbc.noaa.gov/station_page.php?station=oouh1"
 res = get(url)
-soup2 = BeautifulSoup(res.content)
+soup2 = BeautifulSoup(res.content, features="lxml")
 
 # Cardinal directions mapper
 directions = {
