@@ -2,11 +2,40 @@
 import streamlit as st
 import numpy as np
 import pickle
+from requests import get
+from bs4 import BeautifulSoup
 
-st.title("Pipeline Score Predictor")
-st.header("Let's predict the average heat score at pipeline right now!")
+# Get buoy data
+url = "https://www.ndbc.noaa.gov/station_page.php?station=51201"
+res = get(url)
+soup = BeautifulSoup(res.content)
 
-# Define features with '0' coefficients from lasso
+# Get wind data
+url = "https://www.ndbc.noaa.gov/station_page.php?station=oouh1"
+res = get(url)
+soup2 = BeautifulSoup(res.content)
+
+# Cardinal directions mapper
+directions = {
+    "N": 0.,
+    "NNE": 23.,
+    "NE": 45.,
+    "NEE": 68.,
+    "E": 90.,
+    "SEE": 113.,
+    "SE": 135.,
+    "SSE": 158.,
+    "S": 180.,
+    "SSW": 203.,
+    "SW": 225.,
+    "SWW": 248.,
+    "W": 270.,
+    "NWW": 293.,
+    "NW": 315.,
+    "NNW": 338.,
+}
+
+# Assign features with '0' coefficients from lasso
 wave_height = 0
 dominant_period = 0
 avg_period = 0
@@ -32,33 +61,91 @@ dominant_wave_direction_cos_9_h = 0
 gust_speed = 0
 
 # Get user input for lasso features
-avg_period_9_h = st.number_input("Average Wave Period 9 hours ago", 0., 20.)
-avg_period_6_h = st.number_input("Average Wave Period 6 hours ago", 0., 20.)
+# Average period 9 hours ago
+avg_period_9_h = float(
+    soup.find("table", class_="dataTable").find_all("tr")[19].find_all("td")[8].text
+)
 
-# Adjust wind direction
-wind_direction = st.number_input("Current Wind Direction", 0, 359)
+# Average period 6 hours ago
+avg_period_6_h = float(
+    soup.find("table", class_="dataTable").find_all("tr")[13].find_all("td")[8].text
+)
+
+# Current Wind Direction
+wind_direction = float(
+    soup2.find("div", id="data").find_all("tr")[1].find_all("td")[2].text.split()[2]
+)
+
+# Adjust wind directions to sin and cos
 wind_direction_cos = np.cos(wind_direction * (2.0 * np.pi / 360))
 wind_direction_sin = np.sin(wind_direction * (2.0 * np.pi / 360))
 
-# Adjust wave direction
-dominant_wave_direction = st.number_input("Current Dominant Wave Direction", 0, 359)
-dominant_wave_direction_cos = np.cos(dominant_wave_direction * (2.0 * np.pi / 360))
-dominant_wave_direction_6_h = st.number_input(
-    "Dominant Wave Direction 6 hours ago", 0, 359
+# Current wave direction
+dominant_wave_direction = float(
+    soup.find("div", id="data")
+    .find_all("tr")[4]
+    .find_all("td")[2]
+    .text.strip()
+    .split()[2]
 )
+
+# Adjust wave directions to cos
+dominant_wave_direction_cos = np.cos(dominant_wave_direction * (2.0 * np.pi / 360))
+
+# Wave direction 6 hours ago
+dominant_wave_direction_6_h = directions[
+    soup.find("table", class_="dataTable").find_all("tr")[13].find_all("td")[9].text
+]
+
+# Adjust wave directions to cos
 dominant_wave_direction_cos_6_h = np.cos(
     dominant_wave_direction_6_h * (2.0 * np.pi / 360)
 )
 
-avg_period_1_h = st.number_input("Average Wave Period 1 hour ago", 0., 20.)
-wind_speed = st.number_input("Current Wind Speed", 0., 50.)
+# Average wave period 1 hour ago
+avg_period_1_h = float(
+    soup.find("table", class_="dataTable").find_all("tr")[3].find_all("td")[8].text
+)
 
+# Current Wind Speed
+wind_speed = float(
+    soup2.find("div", id="data").find_all("tr")[2].find_all("td")[2].text.split()[0]
+)
 
-dominant_period_1_5_h = st.number_input("Dominant Wave Period 1.5 hours ago", 0., 20.)
-dominant_period_6_h = st.number_input("Dominant Wave Period 6 hours ago", 0., 20.)
-wave_height_3_h = st.number_input("Wave Height 3 hours ago", 0., 20.)
+# Dominant Wave Period 1.5 hours ago
+dominant_period_1_5_h = float(
+    soup.find("table", class_="dataTable").find_all("tr")[4].find_all("td")[7].text
+)
 
-user_input = np.array(
+# Dominant Wave Period 6 hours ago
+dominant_period_6_h = float(
+    soup.find("table", class_="dataTable").find_all("tr")[13].find_all("td")[7].text
+)
+
+# Wave Height 3 hours ago
+wave_height_3_h = float(
+    soup.find("table", class_="dataTable").find_all("tr")[7].find_all("td")[6].text
+)
+
+# Streamlit
+st.title("Pipeline Score Predictor")
+st.header("Let's predict the average heat score at pipeline right now!")
+st.header("This is the data from NOAA:")
+st.subheader("Wind Station: https://www.ndbc.noaa.gov/station_page.php?station=oouh1")
+st.text(f"Current Wind Speed: {wind_speed}")
+st.text(f"Current Wind Direction: {wind_direction}")
+
+st.subheader("Buoy: https://www.ndbc.noaa.gov/station_page.php?station=51201")
+st.text(f"Current Wave Direction: {dominant_wave_direction}")
+st.text(f"Avg. Wave Period 1 hour ago: {avg_period_1_h}")
+st.text(f"Dominant Wave Period 1.5 hours ago: {dominant_period_1_5_h}")
+st.text(f"Wave Height 3 hours ago: {wave_height_3_h}")
+st.text(f"Wave Direction 6 hours ago: {dominant_wave_direction_6_h}")
+st.text(f"Dominant Wave Period 6 hours ago: {dominant_period_6_h}")
+st.text(f"Average Wave Period 6 hours ago: {avg_period_6_h}")
+st.text(f"Average Wave Period 9 hours ago: {avg_period_9_h}")
+
+model_input = np.array(
     [
         wave_height,
         dominant_period,
@@ -102,9 +189,6 @@ with open("../saved-models/saved-lasso.pkl", "rb") as f:
     regressor = pickle.load(f)
 
 # prediction
-prediction = regressor.predict(user_input)
+prediction = regressor.predict(model_input)
 
-check = st.button("I'm ready for a prediction!")
-
-if check:
-    st.header(f"The model predicts: {round(prediction[0], 2)}!")
+st.header(f"The model predicts: {round(prediction[0], 2)}!")
