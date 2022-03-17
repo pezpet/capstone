@@ -3,10 +3,10 @@
 The goal of this project is to use raw buoy data to predict scores in surfing competition heats. The WSL uses sofisticated forecasting models to estimate the quality of waves at each location were events are held, and even though "scoring potential" is frequently mentioned as a critical variable, no specific modeling or forecasting is described when deciding competition dates and times. By creating a model that targets scores, this projects aims to improve the decision making process of the WSL.
 
 Different models were built and evaluated on **Root Mean Squared Error (RMSE)**. RMSE on test sets:
-- Baseline (RMSE: )
-- Linear Regression with Lasso (RMSE: )
-- Extreme Gradient Boosting (RMSE: )
-- Neural Networks (RMSE: )
+- Baseline (RMSE: 3.17)
+- Linear Regression with Lasso (RMSE: 2.82)
+- Extreme Gradient Boosting (RMSE: 2.87)
+- Neural Networks (RMSE: 2.86)
 
 ## Data collection
 ### World Surf League
