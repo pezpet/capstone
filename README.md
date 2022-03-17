@@ -2,11 +2,17 @@
 ## Goals
 The goal of this project is to use raw buoy data to predict scores in surfing competition heats. The WSL uses sofisticated forecasting models to estimate the quality of waves at each location were events are held, and even though "scoring potential" is frequently mentioned as a critical variable, no specific modeling or forecasting is described when deciding competition dates and times. By creating a model that targets scores, this projects aims to improve the decision making process of the WSL.
 
+Different models were built and evaluated on **Root Mean Squared Error (RMSE)**. RMSE on test sets:
+- Baseline (RMSE: )
+- Linear Regression with Lasso (RMSE: )
+- Extreme Gradient Boosting (RMSE: )
+- Neural Networks (RMSE: )
+
 ## Data collection
 ### World Surf League
-The World Surf League organizes a yearly world tour of surfing competitions and is regarded as the highest level of competitive surfing. Their website keeps scores for all competitions back to 2008. These scores were scraped from the site. Additionally, to be able to link scores to buoy data, the dates for all heats and all events were also scraped.
+The World Surf League organizes a yearly world tour of surfing competitions and is regarded as the highest level of competitive surfing. Their website keeps scores for all competitions back to 2008. These scores were scraped from the site. Additionally, to be able to link scores to buoy data, the dates for all heats and all events were also scraped. [Example event page that was scraped](https://www.worldsurfleague.com/events/2008/mct/75/billabong-pipeline-masters)
 
-Scores data description:
+#### Scores data description:
 | Column Name | Data Description | dtype |
 |---|---|---|
 | year | Year in which the competition was held | int |
@@ -16,7 +22,7 @@ Scores data description:
 | name | Athlete Name competing in Heat | str |
 | top_two_waves_total | Sum of the two highest scoring waves for each athlete in a Heat | float |
 
-Round Dates data description:
+#### Round Dates data description:
 | Column Name | Data Description | dtype |
 |---|---|---|
 | year | Year in which the competition was held | int |
@@ -29,7 +35,11 @@ Round Dates data description:
 ### NOAA (National Buoy Data Center)
 The National Buoy Data Center (part of NOAA) keeps historic data from marine buoys around the world for oceanic conditions, including wave height, direction, period, and other information. This historic data is available for download in txt format by year by buoy. There are also weather stations that log historic wind data.
 
-Raw NOAA buoy data description:
+#### [Waimea Buoy Data Source](https://www.ndbc.noaa.gov/station_page.php?station=51201)
+
+#### [Honolulu Wind Data Source](https://www.ndbc.noaa.gov/station_page.php?station=oouh1)
+
+#### NOAA data description:
 | Column Name | Data Description | dtype |
 |---|---|---|
 | #YY | Year of measurement | int |
@@ -70,3 +80,10 @@ Wave and wind directions were converted to `np.sin()` and `np.cos()` for better 
 
 ## Feature Engineering
 The main feature engineering performed in this project was to create time-shifted features of our buoy data.
+
+There is an inherent delay between measurements at offshore buoys and conditions at the beach, which directly affects our target: **scores at the beach**.
+
+## Findings
+There is some predictive power in the models used, as they all perform above baseline. Linear Regression with Lasso performed the best on test data, and produced good insights through feature coefficients that were 'snapped' to 0.
+
+## Risks, Limitations and Assumptions
